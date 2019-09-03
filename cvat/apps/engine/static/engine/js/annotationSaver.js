@@ -41,6 +41,7 @@ class AnnotationSaverModel extends Listener {
     }
 
     async _request(data, action) {
+        console.log("requesting")
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: `/api/v1/jobs/${window.cvat.job.id}/annotations?action=${action}`,
@@ -53,6 +54,13 @@ class AnnotationSaverModel extends Listener {
                 const message = `Could not make ${action} annotations. Code: ${errorData.status}. `
                     + `Message: ${errorData.responseText || errorData.statusText}`;
                 reject(new Error(message));
+                
+            });
+            $.ajax({
+                url: `http://0.0.0.0:8880/tracker/api/v1.0/tasks/${window.cvat.job.id}`,
+                type:'POST',
+                data: JSON.stringify(data),
+                contentType:'application/json',
             });
         });
     }
